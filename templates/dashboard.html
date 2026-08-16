@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Cyber Threat Dashboard</title>
-    <!-- Chart.js লাইব্রেরি যুক্ত করা হলো -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #ffffff; padding: 30px; margin: 0; }
@@ -17,12 +16,10 @@
 <body>
     <h1>🛡️ Cyber Threat Tracker - Live Dashboard</h1>
     
-    <!-- গ্রাফ দেখানোর ক্যানভাস -->
     <div class="chart-container">
         <canvas id="attackChart"></canvas>
     </div>
 
-    <!-- হ্যাকারদের ডেটা দেখানোর টেবিল -->
     <h3>🔴 Recent Attack Logs</h3>
     <table>
         <tr>
@@ -32,7 +29,6 @@
             <th>Used Password</th>
             <th>Time of Attack</th>
         </tr>
-        <!-- ফ্লাস্ক থেকে আসা ডেটাগুলো লুপের মাধ্যমে টেবিলে বসানো হবে -->
         {% for log in logs %}
         <tr>
             <td>{{ log[0] }}</td>
@@ -44,7 +40,6 @@
         {% endfor %}
     </table>
 
-    <!-- Chart.js এর লজিক -->
     <script>
         const labels = {{ ips | tojson }};
         const counts = {{ counts | tojson }};
