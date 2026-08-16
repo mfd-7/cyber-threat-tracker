@@ -1,44 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Cyber Threat Dashboard</title>
+    <meta charset="UTF-8">
+    <title>SOC Threat Intelligence Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #ffffff; padding: 30px; margin: 0; }
-        h1 { color: #ff4c4c; text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; }
-        .chart-container { width: 70%; margin: 30px auto; background-color: #1e1e1e; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
-        table { width: 100%; border-collapse: collapse; margin-top: 30px; background-color: #1e1e1e; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
-        th, td { border: 1px solid #333; padding: 12px; text-align: center; }
-        th { background-color: #ff4c4c; color: white; font-weight: bold; }
-        tr:nth-child(even) { background-color: #2a2a2a; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0b101e;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+        .header-highlight {
+            color: #ff4560;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background-color: #1a2235;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border-top: 4px solid #008ffb;
+        }
+        .card-danger {
+            border-top: 4px solid #ff4560;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .chart-wrapper {
+            width: 100%;
+            height: 400px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #2e3c56;
+        }
+        th {
+            color: #cbd5e1;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        tr:hover {
+            background-color: #232d45;
+        }
+        .badge-ip {
+            background-color: rgba(255, 69, 96, 0.1);
+            color: #ff4560;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        .badge-user {
+            color: #008ffb;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
-    <h1>🛡️ Cyber Threat Tracker - Live Dashboard</h1>
-    
-    <div class="chart-container">
-        <canvas id="attackChart"></canvas>
-    </div>
 
-    <h3>🔴 Recent Attack Logs</h3>
-    <table>
-        <tr>
-            <th>Log ID</th>
-            <th>Attacker IP</th>
-            <th>Used Username</th>
-            <th>Used Password</th>
-            <th>Time of Attack</th>
-        </tr>
-        {% for log in logs %}
-        <tr>
-            <td>{{ log[0] }}</td>
-            <td>{{ log[1] }}</td>
-            <td>{{ log[2] }}</td>
-            <td>{{ log[3] }}</td>
-            <td>{{ log[4] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <h1>SOC <span class="header-highlight">Threat Intelligence</span> Dashboard</h1>
+
+    <div class="container">
+        
+        <div class="card card-danger">
+            <h3>Recent Security Incidents</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Source IP</th>
+                        <th>Target User</th>
+                        <th>Attempted Password</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>#{{ log[0] }}</td>
+                        <td><span class="badge-ip">{{ log[1] }}</span></td>
+                        <td><span class="badge-user">{{ log[2] }}</span></td>
+                        <td>{{ log[3] }}</td>
+                        <td>{{ log[4] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>Attack Frequency Analysis</h3>
+            <div class="chart-wrapper">
+                <canvas id="attackChart"></canvas>
+            </div>
+        </div>
+
+    </div>
 
     <script>
         const labels = {{ ips | tojson }};
@@ -46,23 +130,40 @@
         
         const ctx = document.getElementById('attackChart').getContext('2d');
         new Chart(ctx, {
-            type: 'bar',
+            type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Number of Attacks per IP',
+                    label: 'Attack Volume',
                     data: counts,
-                    backgroundColor: 'rgba(255, 76, 76, 0.6)',
-                    borderColor: 'rgba(255, 76, 76, 1)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(0, 143, 251, 0.1)',
+                    borderColor: '#008ffb',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#ff4560',
+                    pointBorderColor: '#ffffff',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: true,
+                    tension: 0.4
                 }]
             },
-            options: { 
-                scales: { 
-                    y: { beginAtZero: true, ticks: { color: 'white' } },
-                    x: { ticks: { color: 'white' } }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: '#2e3c56' }, 
+                        ticks: { color: '#94a3b8', stepSize: 1 } 
+                    },
+                    x: { 
+                        grid: { display: false }, 
+                        ticks: { color: '#94a3b8' } 
+                    }
                 },
-                plugins: { legend: { labels: { color: 'white' } } }
+                plugins: { 
+                    legend: { labels: { color: '#e2e8f0' } } 
+                }
             }
         });
     </script>
