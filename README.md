@@ -64,4 +64,4 @@ python app.py
 
 3. Open your browser and access:
 Honeypot Login Page: http://127.0.0.1:5000
-Threat Dashboard: gihttp://127.0.0.1:5000/dashboard
+Threat Dashboard: http://127.0.0.1:5000/dashboard
