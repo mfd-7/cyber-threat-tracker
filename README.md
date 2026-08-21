@@ -1,6 +1,6 @@
 # Cyber Threat Tracker (Mini SIEM) with Machine Learning
 
-# What is this project actually doing? (In Simple Words)
+# What is this project actually doing ?
 Imagine you set up a fake 'Admin Login' page (a Honeypot) on the internet. Hackers and malicious bots think it's a real vault and try to break in by guessing passwords. 
 
 This project acts as that fake vault. It secretly catches the attacker's IP address, the username and the password they tried to use. On top of that, we have added an "AI Security Guard (Machine Learning)"! The ML model instantly analyzes their input size and behavior to predict if the attack is a 'High Threat' (done by a fast automated bot/hacker) or a 'Low Threat' (just a normal human typo). You can watch all these attacks happening in real-time on a beautifully visualized Dashboard!
