@@ -19,8 +19,8 @@ def honeypot():
         username = request.form.get('username') or ""
         password = request.form.get('password') or ""
         attacker_ip = request.remote_addr 
-
-        print(f"\n🔥 ATTACK DETECTED! IP: {attacker_ip} | User: {username} | Pass: {password}")
+        
+        prediction_status = "Unknown"
 
         try:
             with open('decision_tree_model.pkl', 'rb') as file:
@@ -31,16 +31,18 @@ def honeypot():
             prediction = ml_model.predict(input_data)[0]
 
             if prediction == 1:
-                print("🧠 ML Alert: 🚨 HIGH THREAT (Hacker or Bot Detected!)\n")
+                prediction_status = "High Threat"
+                print("Alert: 🚨 HIGH THREAT\n")
             else:
-                print("🧠 ML Alert: ✅ LOW THREAT (Looks like a Normal User)\n")
+                prediction_status = "Low Threat"
+                print("Alert: ✅ LOW THREAT\n")
         except Exception as e:
             print(f"⚠️ ML Model Error: {e}\n")
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        sql = "INSERT INTO attack_logs (ip_address, username, password) VALUES (%s, %s, %s)"
-        val = (attacker_ip, username, password)
+        sql = "INSERT INTO attack_logs (ip_address, username, password, threat_level) VALUES (%s, %s, %s, %s)"
+        val = (attacker_ip, username, password, prediction_status)
         cursor.execute(sql, val)
         conn.commit()
 

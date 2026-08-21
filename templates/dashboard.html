@@ -81,6 +81,33 @@
             color: #008ffb;
             font-weight: 600;
         }
+        .badge-high {
+            background-color: rgba(255, 69, 96, 0.15);
+            color: #ff4560;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border: 1px solid #ff4560;
+        }
+        .badge-low {
+            background-color: rgba(0, 227, 150, 0.15);
+            color: #00e396;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border: 1px solid #00e396;
+        }
+        .badge-unknown {
+            background-color: rgba(148, 163, 184, 0.15);
+            color: #94a3b8;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border: 1px solid #94a3b8;
+        }
     </style>
 </head>
 <body>
@@ -98,6 +125,7 @@
                         <th>Source IP</th>
                         <th>Target User</th>
                         <th>Attempted Password</th>
+                        <th>Threat Level</th>
                         <th>Timestamp</th>
                     </tr>
                 </thead>
@@ -108,6 +136,15 @@
                         <td><span class="badge-ip">{{ log[1] }}</span></td>
                         <td><span class="badge-user">{{ log[2] }}</span></td>
                         <td>{{ log[3] }}</td>
+                        <td>
+                            {% if log[5] == 'High Threat' %}
+                                <span class="badge-high">High Threat 🚨</span>
+                            {% elif log[5] == 'Low Threat' %}
+                                <span class="badge-low">Low Threat ✅</span>
+                            {% else %}
+                                <span class="badge-unknown">{{ log[5] }}</span>
+                            {% endif %}
+                        </td>
                         <td>{{ log[4] }}</td>
                     </tr>
                     {% endfor %}
