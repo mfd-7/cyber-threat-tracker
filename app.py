@@ -1,5 +1,7 @@
 from flask import Flask, request, render_template
 import mysql.connector
+import pickle
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -14,11 +16,26 @@ def get_db_connection():
 @app.route('/', methods=['GET', 'POST'])
 def honeypot():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.form.get('username') or ""
+        password = request.form.get('password') or ""
         attacker_ip = request.remote_addr 
 
-        print(f"\n🔥 ATTACK DETECTED! IP: {attacker_ip} | User: {username} | Pass: {password}\n")
+        print(f"\n🔥 ATTACK DETECTED! IP: {attacker_ip} | User: {username} | Pass: {password}")
+
+        try:
+            with open('decision_tree_model.pkl', 'rb') as file:
+                ml_model = pickle.load(file)
+
+            input_data = pd.DataFrame([[len(username), len(password)]], columns=['user_length', 'pass_length'])
+            
+            prediction = ml_model.predict(input_data)[0]
+
+            if prediction == 1:
+                print("🧠 ML Alert: 🚨 HIGH THREAT (Hacker or Bot Detected!)\n")
+            else:
+                print("🧠 ML Alert: ✅ LOW THREAT (Looks like a Normal User)\n")
+        except Exception as e:
+            print(f"⚠️ ML Model Error: {e}\n")
 
         conn = get_db_connection()
         cursor = conn.cursor()
